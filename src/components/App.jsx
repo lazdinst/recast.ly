@@ -3,9 +3,42 @@ class App extends React.Component {
     super(props);
     this.state = {videos: window.exampleVideoData, video: window.exampleVideoData[0] };
     this.handleTitleClick = this.handleTitleClick.bind(this);
+    this.handleSearchChange = this.handleSearchChange.bind(this);
   }
+  
+  handleSearchChange(e) {
+    // debugger;
+    var context = this;
+    $.ajax({
+      url: 'https://www.googleapis.com/youtube/v3/search',
+      type: 'GET',
+      data: {
+        q: e.target.value,
+        key: 'AIzaSyAdj5AsN5xfAdb3qLqNS-3bYtU2RSVVkmU',
+        part: 'snippet',
+        maxResults: 5,
+        type: 'video',
+        videoEmbeddable: true
+      },
+      dataType: 'json',
+      success: function(data) {
+        console.log(data);
+        // debugger;
+        this.setState({videos: data});
+      },
+      error: function(err) {
+        console.log('ERROR ', err);
+      }
+    });
+  }
+  
+  searchSuccess(data) {
+    // debugger;
+    this.setState({videos: data});
+  }
+  
   handleTitleClick(e, video) {
-    console.log(e);
+    // console.log(e);
     this.setState({video: video});
   }
   render() {
@@ -13,16 +46,14 @@ class App extends React.Component {
       <div>
         <nav className="navbar">
           <div className="col-md-6 offset-md-3">
-            <div><h5><em>search</em> view goes here</h5></div>
+            <Search handleSearchChange={this.handleSearchChange} />
           </div>
         </nav>
         <div className="row">
           <div className="col-md-7">
-            {/* <div><h5><em>videoPlayer</em> view goes here</h5></div>*/}
             <VideoPlayer video={this.state.video}/>
           </div>
           <div className="col-md-5">
-            {/*<div><h5><em>videoList</em> view goes here</h5></div>*/}
             <VideoList handleTitleClick={this.handleTitleClick} videos={this.state.videos}/>
           </div>
         </div>
