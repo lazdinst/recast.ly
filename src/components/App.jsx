@@ -1,11 +1,13 @@
+
 class App extends React.Component {
   constructor (props) {
     super(props);
-    this.state = {videos: [], video: window.exampleVideoData[0] };
+    this.state = {videos: [], video: window.exampleVideoData[0], autoplay: ''};
     this.handleTitleClick = this.handleTitleClick.bind(this);
     this.handleSearchChange = this.handleSearchChange.bind(this);
     this.searchSuccess = this.searchSuccess.bind(this);
     this.handleKeyPressSearch = this.handleKeyPressSearch.bind(this);
+    this.handleAutoPlay = this.handleAutoPlay.bind(this);
   }
   
   handleSearchChange(e) {
@@ -36,9 +38,7 @@ class App extends React.Component {
   }
   
   handleKeyPressSearch(e, videos) {
-    console.log('Pressed Key: ' + e.key);
     if (e.key === 'Enter') {
-      console.log(videos[0]);
       this.setState({video: videos[0]});
     }
   }
@@ -47,17 +47,26 @@ class App extends React.Component {
     this.setState({video: video});
   }
   
+  handleAutoPlay(e) {
+    if (e.target.checked === true) {
+      this.setState({autoplay: '?autoplay=1&cc_load_policy=1'});
+    } else {
+      this.setState({autoplay: ''});
+    }
+  }
+  
   render() {
     return (
       <div>
         <nav className="navbar">
           <div className="col-md-6 offset-md-3">
             <Search handleSearchChange={this.handleSearchChange} handleKeyPressSearch={this.handleKeyPressSearch} videos={this.state.videos}/>
+            <ToggleAutoPlay handleAutoPlay={this.handleAutoPlay} />
           </div>
         </nav>
         <div className="row">
           <div className="col-md-7">
-            <VideoPlayer video={this.state.video}/>
+            <VideoPlayer video={this.state.video} autoplay={this.state.autoplay}/>
           </div>
           <div className="col-md-5">
             <VideoList handleTitleClick={this.handleTitleClick} videos={this.state.videos}/>
